@@ -3,7 +3,6 @@ package service;
 import model.Vehicle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class ParkingBuilding {
         initParkingBuilding(minFloor, maxFloor);
     }
 
-    public void initParkingBuilding (Integer minFloor, Integer maxFloor) {
+    private void initParkingBuilding (Integer minFloor, Integer maxFloor) {
         for(int i=minFloor; i<=maxFloor; i++){
             if(i != 0) {
                 parkingBuilding.put(i, new ArrayList<Vehicle>(4));
@@ -44,56 +43,55 @@ public class ParkingBuilding {
         }
     }
 
-    public void getSuggestedParkingFloor(Vehicle vehicle){
+    public void addVechileToParking(int floor, Vehicle vehicle){
+        if(floor != 0) {
+            ArrayList<Vehicle> vehicles = parkingBuilding.get(floor);
+            vehicles.add(vehicle);
+            parkingBuilding.put(floor, vehicles);
+        }
+
+    }
+
+    public void suggestedFloorForParking(int floor){
+        if(floor != 0){
+            System.out.println("Suggested parking floor: " + floor);
+        }else {
+            System.out.println("Do not exists free parking places for this vechile");
+        }
+    }
+
+    public int getSuggestedParkingFloor(Vehicle vehicle){
         Integer entrance = vehicle.getEntranceFloor();
         String vehicleType = vehicle.getType();
 
-        Vehicle v = new Vehicle();
-        ArrayList<Vehicle> vehicles12 = parkingBuilding.get(6);
-        vehicles12.add(v); vehicles12.add(v);vehicles12.add(v);vehicles12.add(v);
-        parkingBuilding.put(6,vehicles12);
-        parkingBuilding.put(5,vehicles12);
-        parkingBuilding.put(4,vehicles12);
-        parkingBuilding.put(3,vehicles12);
-        parkingBuilding.put(2,vehicles12);
-        parkingBuilding.put(1,vehicles12);
-       // parkingBuilding.put(-2,vehicles12);
-       // parkingBuilding.put(7,vehicles12);
-        //parkingBuilding.put(-1,vehicles12);
 
         if(vehicleType.equals(VehicleTypes.Van.toString())){
             ArrayList<Vehicle> vehicles = parkingBuilding.get(minFloor);
             ArrayList<Vehicle> vehicles1 = parkingBuilding.get(minFloor + 1);
 
             if(vehicles.size() >= parkingFreePlaces && vehicles1.size() >= parkingFreePlaces){
-                System.out.println("Do not exists free parking places for " + VehicleTypes.Van.toString());
-                return;
+                return 0;
             }
 
             if (entrance >= minFloor + 2){
                 if(vehicles1.size() < parkingFreePlaces){
-                    System.out.println("Suggested parking: " + (minFloor + 1));
-                   /* Vehicle vch= new Vehicle();
-                    vehicles1.add(vch);
-                    parkingBuilding.put((minFloor + 1),vehicles1);*/
-                    return;
+                    return minFloor + 1;
                 } else{
-                    System.out.println("Suggested parking: " + minFloor);
-                    return;
+                    return minFloor;
                 }
             }
             if(entrance == minFloor){
                 if(vehicles.size() < parkingFreePlaces) {
-                    System.out.println("Suggested parking: " + minFloor);
+                    return minFloor;
                 }else{
-                    System.out.println("Suggested parking: " + (minFloor + 1));
+                    return minFloor + 1;
                 }
             }
             if(entrance == minFloor + 1){
                 if(vehicles1.size() < parkingFreePlaces){
-                    System.out.println("Suggested parking: " + (minFloor + 1));
+                    return minFloor + 1;
                 }else{
-                    System.out.println("Suggested parking: " + minFloor);
+                    return  minFloor;
                 }
             }
         } else if (vehicleType.equals(VehicleTypes.ElectricCar.toString())){
@@ -101,31 +99,30 @@ public class ParkingBuilding {
             ArrayList<Vehicle> vehicles1 = parkingBuilding.get(maxFloor - 1);
 
             if(vehicles.size() >= parkingFreePlaces && vehicles1.size() >= parkingFreePlaces){
-                System.out.println("Do not exists free parking places for " + VehicleTypes.ElectricCar.toString());
-                return;
+                return 0;
             }
 
             if (entrance <= maxFloor - 2){
                 if(vehicles1.size() < parkingFreePlaces){
-                    System.out.println("Suggested parking: " + (maxFloor - 1));
+                    return  maxFloor - 1;
                 } else{
-                    System.out.println("Suggested parking: " + maxFloor);
+                    return maxFloor;
                 }
             }
 
             if(entrance == maxFloor){
                 if(vehicles.size() < parkingFreePlaces) {
-                    System.out.println("Suggested parking: " + maxFloor);
+                    return maxFloor;
                 }else{
-                    System.out.println("Suggested parking: " + (maxFloor - 1));
+                    return maxFloor -1;
                 }
             }
 
             if(entrance == maxFloor - 1){
                 if(vehicles1.size() < parkingFreePlaces){
-                    System.out.println("Suggested parking: " + (maxFloor - 1));
+                    return maxFloor-1;
                 }else{
-                    System.out.println("Suggested parking: " + maxFloor);
+                    return maxFloor;
                 }
             }
         }
@@ -142,8 +139,7 @@ public class ParkingBuilding {
                                    if (maxFloor - key == top) {
                                        top++;
                                        if (parkingFreePlaces - value > 0) {
-                                           System.out.println("Suggested: " + key);
-                                           return;
+                                           return key;
                                        }
                                    }
                                }
@@ -155,13 +151,12 @@ public class ParkingBuilding {
                            Integer value = entry.getValue().size();
                            if (key < maxFloor - 1 && key > minFloor + 1) {
                                if (parkingFreePlaces - value > 0) {
-                                   System.out.println("Suggested: " + key);
-                                   return;
+                                   return key;
                                }
                            }
                        }
                    }else{
-                       ArrayList<Vehicle> vehicles = parkingBuilding.get(entrance);
+                       ArrayList<Vehicle> vehicles;
                            int suggestedTop = 0;
                            int suggestedBottom = 0;
                            for(int it = entrance; it < maxFloor-1; it++){
@@ -171,18 +166,19 @@ public class ParkingBuilding {
                                     break;
                                 }
                            }
-                           for(int it=entrance; it > minFloor+1; it--){
+                           System.out.println(suggestedTop);
+                           for(int it=entrance; it > 0; it--){
                                vehicles = parkingBuilding.get(it);
                                if(parkingFreePlaces - vehicles.size() > 0){
                                    suggestedBottom = it;
                                    break;
                                }
                            }
-
-                           if(Math.abs(entrance - suggestedBottom) <= Math.abs(entrance - suggestedTop) ){
-                               System.out.println("Suggested: " + suggestedBottom);
+                            System.out.println(suggestedBottom);
+                           if(Math.abs(entrance - suggestedBottom) < Math.abs(entrance - suggestedTop) && suggestedBottom != 0){
+                                return suggestedBottom;
                            }else{
-                               System.out.println("Suggested: " + suggestedTop);
+                               return suggestedTop;
                            }
                    }
                }else{
@@ -191,7 +187,6 @@ public class ParkingBuilding {
                    int temp = entrance + 2;
                    for(int i=0; i<suggestions.length; i++){
                        suggestions[i] = Math.abs(suggestions[i] - temp);
-                       //System.out.println(suggestions[i]);
                    }
                    for(int i=0; i<enableFloors.length; i++){
                        ArrayList<Vehicle> vehicles = parkingBuilding.get(enableFloors[i]);
@@ -201,40 +196,38 @@ public class ParkingBuilding {
                        else{
                            enableFloors[i] = 0;
                        }
-                       //System.out.println(enableFloors[i]);
                    }
 
-                   int tmp = 10000;
+                   int tmp = 1000;
                    for(int i=0; i<suggestions.length; i++){
                        if(enableFloors[i] == 1){
                            tmp = Math.min(tmp, suggestions[i]);
                        }
                    }
-                   int ans= 0;
+                   int answer = 0;
                    for(int i=0; i<suggestions.length; i++){
                        if(enableFloors[i] == 1 && suggestions[i] == tmp){
-                           ans = i;
+                           answer = i;
                        }
                    }
-                   //System.out.println(ans);
-                   if(ans == 0){
-                       System.out.println("Suggested: " + (minFloor));
-                   }else if(ans == 1){
-                       System.out.println("Suggested: " + (minFloor+1));
-                   }else if(ans == 2){
-                       System.out.println("Suggested: " + (maxFloor - 1));
+                   if(answer == 0){
+                       return minFloor;
+                   }else if(answer == 1){
+                       return  minFloor+1;
+                   }else if(answer == 2){
+                       return maxFloor-1;
                    }else{
-                       System.out.println("Suggested: " + maxFloor);
+                       return maxFloor;
                    }
-
-
                }
             }
+            return 0;
         }
+        return 0;
     }
 
     private boolean ifExistsFreePlaces (){
-        Integer freePlaces = 0;
+        int freePlaces = 0;
         for (ArrayList value : parkingBuilding.values()) {
             freePlaces += parkingFreePlaces - value.size();
         }
@@ -242,8 +235,7 @@ public class ParkingBuilding {
     }
 
     private boolean ifExistsFreePlacesPetrolCars(){
-        Integer freePlacesForPetrolCars = 0;
-
+        int freePlacesForPetrolCars = 0;
         for (Map.Entry<Integer, ArrayList<Vehicle>> entry : parkingBuilding.entrySet()) {
             Integer key = entry.getKey();
             Integer value = entry.getValue().size();
@@ -251,7 +243,6 @@ public class ParkingBuilding {
                 freePlacesForPetrolCars += parkingFreePlaces - value;
             }
         }
-        //System.out.println(freePlacesForPetrolCars);
         return (freePlacesForPetrolCars > 0) ? true : false;
     }
 }
