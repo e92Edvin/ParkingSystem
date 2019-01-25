@@ -6,8 +6,8 @@ public class ParkingManagement {
     public static void main(String[] args) {
         System.out.println("***Welcome to parking lot suggestion system***");
         ParkingBuilding parking = new ParkingBuilding(-2, 8);
-        
-        for(int i=0; i< 15; i++) {
+
+        for(int i=0; i<15; i++) {
             Vehicle vehicle = new Vehicle();
             vehicle.setEntranceFloor();
             vehicle.setType();
