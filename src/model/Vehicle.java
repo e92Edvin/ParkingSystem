@@ -47,9 +47,17 @@ public class Vehicle {
 
     public void setEntranceFloor(){
         Integer entranceFloor;
+        String entry;
+
         System.out.println("Enter vehicle entrance floor: ");
         Scanner scanner = new Scanner(System.in);
-        entranceFloor = scanner.nextInt();
+
+        entry = scanner.next();
+        if ((entry.matches("[0-8]+") && entry.length() < 2 ) || entry.equals("-1") || entry.equals("-2")) {
+            entranceFloor = Integer.parseInt(entry);
+        }else{
+            entranceFloor = 2;
+        }
         this.entranceFloor = entranceFloor;
     }
 

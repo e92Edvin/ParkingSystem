@@ -166,7 +166,6 @@ public class ParkingBuilding {
                                     break;
                                 }
                            }
-                           System.out.println(suggestedTop);
                            for(int it=entrance; it > 0; it--){
                                vehicles = parkingBuilding.get(it);
                                if(parkingFreePlaces - vehicles.size() > 0){
@@ -174,7 +173,6 @@ public class ParkingBuilding {
                                    break;
                                }
                            }
-                            System.out.println(suggestedBottom);
                            if(Math.abs(entrance - suggestedBottom) < Math.abs(entrance - suggestedTop) && suggestedBottom != 0){
                                 return suggestedBottom;
                            }else{
